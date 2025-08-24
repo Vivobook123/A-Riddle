@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+  <title>For You, From Basel 💘</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg1:#ff9a9e;      
+      --bg2:#fad0c4;      
+      --bg3:#fbc2eb;      
+      --bg4:#a6c0fe;      
+      --ink:#2b1a1d;      
+      --muted:#5b3f43;
+      --accent:#ff5c8a;   
+      --accent-2:#ffb3c1; 
+      --glass: rgba(255,255,255,.18);
+      --glass-border: rgba(255,255,255,.35);
+      --shadow: 0 10px 30px rgba(43,26,29,.18);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+      background: linear-gradient(120deg,var(--bg1),var(--bg2),var(--bg3),var(--bg4));
+      background-size: 240% 240%;
+      animation: bgShift 14s ease-in-out infinite;
+      overflow-x:hidden;
+    }
+    @keyframes bgShift{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+    .floaty{
+      position:fixed; inset:0; pointer-events:none; overflow:hidden;
+      z-index:0;
+    }
+    .floaty span{
+      position:absolute; font-size:clamp(16px,2.2vw,28px); opacity:.22;
+      animation: drift linear forwards;
+    }
+    @keyframes drift{
+      from{transform:translateY(110vh) translateX(var(--x,0)); opacity:.0}
+      8%{opacity:.22}
+      to{transform:translateY(-15vh) translateX(calc(var(--x,0) + 12px)); opacity:0}
+    }
+
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding: 48px 18px;
+      position:relative;
+      z-index:1;
+    }
+
+    .card{
+      width:min(860px, 96vw);
+      padding: clamp(22px, 4vw, 42px);
+      border-radius: var(--radius);
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    h1{
+      font-family:"Playfair Display", Georgia, serif;
+      font-weight:700;
+      font-size:clamp(28px, 5vw, 48px);
+      line-height:1.12;
+      margin:0 0 10px;
+      letter-spacing:.2px;
+    }
+    .lead{
+      margin:0 0 22px;
+      color:var(--muted);
+      font-size:clamp(14px, 1.7vw, 18px);
+    }
+    .question{
+      margin: 22px 0 10px;
+      font-size:clamp(18px, 2.3vw, 28px);
+      font-weight:600;
+    }
+    .question .highlight{
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .choices{
+      display:grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 14px;
+      margin: 20px 0 10px;
+    }
+    @media (max-width:760px){
+      .choices{grid-template-columns:1fr}
+    }
+
+    button.choice{
+      display:flex; align-items:center; gap:12px;
+      border:none; border-radius: 16px;
+      padding: 16px 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.75));
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 14px rgba(0,0,0,.08), inset 0 0 0 1px rgba(255,255,255,.6);
+      font: 600 16px/1.2 Inter, system-ui, sans-serif;
+      color: var(--ink);
+      cursor:pointer;
+      transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+      position:relative;
+      isolation:isolate;
+    }
+    button.choice .emoji{
+      font-size:20px; filter:saturate(1.2);
+    }
+    button.choice:hover{ transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.12), inset 0 0 0 1px rgba(255,255,255,.7);}
+    button.choice:active{ transform: translateY(0); }
+    button.choice:disabled{
+      opacity:.55; cursor:not-allowed; transform:none;
+    }
+    .choice .tag{
+      font-size:12px; font-weight:600; letter-spacing:.2px; opacity:.7;
+      background: #ffe7ef; color:#9b2450; padding:6px 9px; border-radius:999px;
+      position:absolute; right:10px; bottom:10px;
+    }
+
+    .lives{
+      display:flex; align-items:center; gap:8px; margin: 6px 0 14px;
+      font-size:14px; color:var(--muted);
+    }
+    .hearts{letter-spacing:2px; font-size:18px}
+    .hearts .off{opacity:.25; filter:grayscale(1)}
+    .feedback{
+      min-height:28px; margin: 6px 0 2px;
+      font-size:clamp(14px, 1.8vw, 18px);
+      font-weight:600;
+    }
+    .shake{
+      animation: shake .5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake{
+      10%, 90% { transform: translateX(-1px); }
+      20%, 80% { transform: translateX(2px); }
+      30%, 50%, 70% { transform: translateX(-4px); }
+      40%, 60% { transform: translateX(4px); }
+    }
+
+    .reveal{
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 16px;
+      background: linear-gradient(140deg, rgba(255,92,138,.16), rgba(255,237,243,.6));
+      border: 1px solid rgba(255,92,138,.3);
+      display:none;
+    }
+    .reveal.show{ display:block; animation: pop .5s ease both; }
+    @keyframes pop{
+      from{ transform: scale(.96); opacity:0 }
+      to{ transform: scale(1); opacity:1 }
+    }
+    .big{
+      font-family:"Playfair Display", Georgia, serif;
+      font-size:clamp(22px, 3.4vw, 34px);
+      line-height:1.2;
+    }
+    .gradient-text{
+      background: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      color: #e91e63;
+    }
+    .sub{
+      margin-top:8px; color:var(--muted); font-size:clamp(12px,1.5vw,15px)
+    }
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;
+    }
+    .ghost{
+      border-radius:12px; padding:10px 14px; font-weight:600;
+      border:1px dashed rgba(255,92,138,.6);
+      background: rgba(255,255,255,.4);
+      cursor:pointer;
+    }
+    .ghost:hover{ background: rgba(255,255,255,.65) }
+
+    footer{
+      text-align:center; margin-top:16px; font-size:12px; color:rgba(0,0,0,.45)
+    }
+    footer a{ color:inherit }
+
+    .confetti{
+      position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden;
+    }
+    .confetti i{
+      position:absolute; font-style:normal; user-select:none;
+      font-size:clamp(18px,2.6vw,28px);
+      animation: fall var(--dur) linear forwards;
+      transform: translateY(-10vh) rotate(var(--rot));
+      filter:saturate(1.15);
+    }
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(calc(var(--rot) + 160deg)); opacity:.0 }
+    }
+  </style>
+</head>
+<body>
+  <div class="floaty" id="floaty" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <main class="card" role="main" aria-live="polite">
+      <h1>Hi gorgeous 👋</h1>
+      <p class="lead"></p>
+
+      <p class="question">
+        How much do you think <span class="highlight">Basel</span> loves your cheeks😊?
+      </p>
+
+      <div class="choices" id="choices">
+        <button class="choice" data-id="sushi" aria-label="As your love for sushi">
+          <span class="emoji" aria-hidden="true">🍣</span>
+          <span>
+            As your love for <strong>sushi</strong><br/>
+            <small>Delicious… but is it enough?</small>
+          </span>
+          <span class="tag" aria-hidden="true">Pick me</span>
+        </button>
+
+        <button class="choice" data-id="ayla" aria-label="As your love for Ayla">
+          <span class="emoji" aria-hidden="true">🧒🏾</span>
+          <span>
+            As your love for <strong>Ayla</strong><br/>
+            <small>That’s huge. Still…</small>
+          </span>
+          <span class="tag" aria-hidden="true">Or me</span>
+        </button>
+
+        <button class="choice" data-id="basel" aria-label="As your love for Basel">
+          <span class="emoji" aria-hidden="true">💘</span>
+          <span>
+            As your love for <strong>Basel</strong><br/>
+            <small>Flirty! But keep guessing.</small>
+          </span>
+          <span class="tag" aria-hidden="true">😏</span>
+        </button>
+      </div>
+
+      <div class="lives" id="lives" aria-live="polite">
+        <span>Tries left:</span>
+        <span class="hearts" id="hearts" aria-hidden="true">❤️❤️❤️</span>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <section class="reveal" id="reveal" aria-hidden="true">
+        <div class="big">
+          Plot twist ➜
+          <span class="gradient-text">
+            Basel’s love for your cheeks is more than all three <em>together</em>.
+          </span>
+        </div>
+        <p class="sub">Yes, even more than sushi 🍣 + Ayla 🌸 + Basel 💘 combined!</p>
+        <div class="actions">
+          <button class="ghost" id="again">Play again</button>
+          <button class="ghost" id="sendPhoto">P.S. Did you send Basel a cute photo? 😉</button>
+        </div>
+      </section>
+
+      <footer>Built with 💖 &amp; bad jokes by Basel</footer>
+    </main>
+  </div>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script>
+    (function ambient(){
+      const layer = document.getElementById('floaty');
+      const emotes = ['💖','💞','💗','✨','💓','💘'];
+      const spawn = () => {
+        const span = document.createElement('span');
+        span.textContent = emotes[Math.floor(Math.random()*emotes.length)];
+        span.style.left = Math.random()*100 + 'vw';
+        span.style.setProperty('--x', (Math.random()*50-25) + 'px');
+        span.style.animationDuration = (10 + Math.random()*10) + 's';
+        layer.appendChild(span);
+        setTimeout(()=> span.remove(), 20000);
+      };
+      for(let i=0;i<14;i++){ setTimeout(spawn, i*600); }
+      setInterval(spawn, 1200);
+    })();
+
+    const triesTotal = 3;
+    let tries = 0;
+    const heartsEl = document.getElementById('hearts');
+    const feedbackEl = document.getElementById('feedback');
+    const revealEl = document.getElementById('reveal');
+    const choices = Array.from(document.querySelectorAll('button.choice'));
+    const confettiLayer = document.getElementById('confetti');
+
+    function updateHearts(){
+      const left = Math.max(triesTotal - tries, 0);
+      let s = '';
+      for(let i=0;i<triesTotal;i++){
+        s += i < left ? '❤️' : '<span class="off">❤️</span>';
+      }
+      heartsEl.innerHTML = s;
+    }
+    function setDisabled(state){
+      choices.forEach(btn=> btn.disabled = state);
+    }
+    function shake(el){
+      el.classList.remove('shake');
+      void el.offsetWidth;
+      el.classList.add('shake');
+    }
+
+    const wrongLines = [
+      "Cute guess… but nope! 😏 Try again.",
+      "Close! But Basel’s love is even bigger. One more go! 💫"
+    ];
+
+    function dropConfetti(){
+      const symbols = ['💖','💘','💞','✨','💝','💕'];
+      const count = 70;
+      const duration = () => (6 + Math.random()*5).toFixed(2) + 's';
+      for(let i=0;i<count;i++){
+        const iEl = document.createElement('i');
+        iEl.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+        iEl.style.left = Math.random()*100 + 'vw';
+        iEl.style.setProperty('--dur', duration());
+        iEl.style.setProperty('--rot', (Math.random()*120 - 60) + 'deg');
+        confettiLayer.appendChild(iEl);
+        setTimeout(()=> iEl.remove(), 12000);
+      }
+    }
+
+    function handleChoice(e){
+      const btn = e.currentTarget;
+      if(btn.disabled) return;
+
+      tries++;
+      updateHearts();
+
+      if(tries < triesTotal){
+        feedbackEl.textContent = wrongLines[tries-1] || "Wrong answer — cheek math is hard. Try again 😉";
+        shake(btn);
+      } else {
+        feedbackEl.textContent = "";
+        setDisabled(true);
+        revealEl.classList.add('show');
+        revealEl.setAttribute('aria-hidden','false');
+        dropConfetti();
+      }
+    }
+    choices.forEach(btn => btn.addEventListener('click', handleChoice));
+
+    document.getElementById('again').addEventListener('click', () => {
+      tries = 0;
+      updateHearts();
+      setDisabled(false);
+      feedbackEl.textContent = "";
+      revealEl.classList.remove('show');
+      revealEl.setAttribute('aria-hidden','true');
+    });
+
+    document.getElementById('sendPhoto').addEventListener('click', () => {
+      alert("Hehe. Consider this your gentle nudge: send Basel a cute photo 💕");
+    });
+    
+    updateHearts();
+  </script>
+</body>
+</html>
